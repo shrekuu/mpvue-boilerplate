@@ -1,0 +1,13 @@
+{
+  "baseUrl": "https://mina-1252139118.coscd.myqcloud.com/mpvue-boilerplate",
+  "appDir": "./cos/upload",
+  "backupDir": "./cos/static",
+  "uploadFileSuffix": [".jpg", ".png", ".gif", ".woff", ".svg"],
+  "cos": {
+    "secret_id": "^_^ 填写 secret id",
+        "secret_key": "^_^ 填写 secret key",
+    "bucket": "mina-1252139118",
+    "region": "ap-chengdu",
+    "folder": "mpvue-boilerplate/static"
+  }
+}

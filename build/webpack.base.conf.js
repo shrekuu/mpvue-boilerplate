@@ -1,32 +1,25 @@
 var path = require('path')
-var fs = require('fs')
 var utils = require('./utils')
 var config = require('../config')
 var webpack = require('webpack')
-var merge = require('webpack-merge')
 var vueLoaderConfig = require('./vue-loader.conf')
 var MpvuePlugin = require('webpack-mpvue-asset-plugin')
-var glob = require('glob')
 var CopyWebpackPlugin = require('copy-webpack-plugin')
-var relative = require('relative')
+const MpvueEntry = require('mpvue-entry')
+const cosBaseUrl = require('../wecos.config').baseUrl
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
-function getEntry (rootSrc) {
-  var map = {};
-  glob.sync(rootSrc + '/pages/**/main.js')
-  .forEach(file => {
-    var key = relative(rootSrc, file).replace('.js', '');
-    map[key] = file;
-  })
-   return map;
+// 生成一个随机字符串
+function generateRandomStr () {
+  var result = ''
+  while (!result) result = Math.random().toString(36).substr(2, 10)
+  return result
 }
 
-const appEntry = { app: resolve('./src/main.js') }
-const pagesEntry = getEntry(resolve('./src'), 'pages/**/main.js')
-const entry = Object.assign({}, appEntry, pagesEntry)
+const entry = MpvueEntry.getEntry({ config: resolve('src/entry.js') })
 
 let baseWebpackConfig = {
   // 如果要自定义生成的 dist 目录里面的文件路径，
@@ -60,6 +53,11 @@ let baseWebpackConfig = {
         options: vueLoaderConfig
       },
       {
+        test: /\.vue$/,
+        loader: 'mpvue-config-loader',
+        exclude: [resolve('src/components')],
+      },
+      {
         test: /\.js$/,
         include: [resolve('src'), resolve('test')],
         use: [
@@ -69,6 +67,60 @@ let baseWebpackConfig = {
             options: Object.assign({checkMPEntry: true}, vueLoaderConfig)
           },
         ]
+      },
+      // 替换指向对象存储的资源的链接
+      // 将样式里指向 /cos/images 的背景图片地址指向对象存储里文件地址并加上随机字符串
+      // 将 /static/images 本地图片一地址加上随机字符串
+      // 修改这里正则时注意前后行断言
+      {
+        test: /\.vue$/,
+        loader: 'string-replace-loader2',
+        options: {
+          find: /(?<=background-image:\s*url\()[^)]+(?=\))/g,
+          replace: function (match) {
+            
+            // 去掉引号
+            if (/^('|")[^'"]+('|")$/.test(match)) {
+              match = match.slice(1, -1)
+            }
+
+            // 本地图片, 图片放在了 src/static 目录
+            if (/^\/static\/images\/.*\.(png|jpg|jpeg|svg|gif)$/.test(match)) {
+              return match + '#' + generateRandomStr()
+            }
+
+            // cos 图片
+            if (/^\/cos\/static\/images\/.*\.(png|jpg|jpeg|svg|gif)$/.test(match)) {
+              return cosBaseUrl + match.substr(4) + '#' + generateRandomStr()
+            }
+
+            return match
+          },
+        },
+      },
+
+      // 将模版里指向 /cos/images 的图片地址指向对象存储里文件地址并加上随机字符串
+      // 将 /static/images 本地图片一地址加上随机字符串
+      {
+        test: /\.vue$/,
+        loader: 'string-replace-loader2',
+        options: {
+          find: /(?<=src=")[^"]+(?=")/g,
+          replace: function (match) {
+            
+            // 本地图片, 图片放在了 src/static 目录
+            if (/^\/static\/images\/.*\.(png|jpg|jpeg|svg|gif)$/.test(match)) {
+              return match + '#' + generateRandomStr()
+            }
+
+            // cos 图片
+            if (/^\/cos\/static\/images\/.*\.(png|jpg|jpeg|svg|gif)$/.test(match)) {
+              return cosBaseUrl + match.substr(4) + '#' + generateRandomStr()
+            }
+
+            return match
+          },
+        },
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -85,14 +137,6 @@ let baseWebpackConfig = {
           limit: 10000,
           name: utils.assetsPath('media/[name].[ext]')
         }
-      },
-      {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        loader: 'url-loader',
-        options: {
-          limit: 10000,
-          name: utils.assetsPath('fonts/[name].[ext]')
-        }
       }
     ]
   },
@@ -103,12 +147,10 @@ let baseWebpackConfig = {
       'mpvuePlatform': 'global.mpvuePlatform'
     }),
     new MpvuePlugin(),
-    new CopyWebpackPlugin([{
-      from: '**/*.json',
-      to: ''
-    }], {
-      context: 'src/'
-    }),
+
+    // mpvue entry
+    new MpvueEntry(),
+
     new CopyWebpackPlugin([
       {
         from: path.resolve(__dirname, '../static'),
@@ -117,26 +159,6 @@ let baseWebpackConfig = {
       }
     ])
   ]
-}
-
-// 针对百度小程序，由于不支持通过 miniprogramRoot 进行自定义构建完的文件的根路径
-// 所以需要将项目根路径下面的 project.swan.json 拷贝到构建目录
-// 然后百度开发者工具将 dist/swan 作为项目根目录打
-const projectConfigMap = {
-  tt: '../project.config.json',
-  swan: '../project.swan.json'
-}
-
-const PLATFORM = process.env.PLATFORM
-if (/^(swan)|(tt)$/.test(PLATFORM)) {
-  baseWebpackConfig = merge(baseWebpackConfig, {
-    plugins: [
-      new CopyWebpackPlugin([{
-        from: path.resolve(__dirname, projectConfigMap[PLATFORM]),
-        to: path.resolve(config.build.assetsRoot)
-      }])
-    ]
-  })
 }
 
 module.exports = baseWebpackConfig
