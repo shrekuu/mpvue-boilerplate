@@ -1,9 +1,8 @@
 <template>
   <div class="page">
     <navbar :title="post && post.title"
-            background-color="#F7A700"
-            title-color="#009a61"
-    ></navbar>
+            color="#009a61"
+            background="#F7A700"></navbar>
     <div class="post" v-if="post">
       <div class="title">
         {{ post.title }}

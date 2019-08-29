@@ -1,6 +1,10 @@
 <template>
     <div class="page">
-        <navbar title="我的" title-color="deeppink" background-color="lightpink" :back-visible="false" :home-visible="true"></navbar>
+        <navbar title="我的"
+                color="deeppink"
+                background="lightpink"
+                :back="false"
+                :home="true"></navbar>
         <div class="author">
             <img src="/static/images/account/avatar.jpg" mode="aspectFill" class="avatar" />
             <div class="details">

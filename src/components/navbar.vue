@@ -6,7 +6,7 @@
     <cover-view class="navbar-placeholder" :style="{height: navbarHeight + 'PX'}"></cover-view>
 
     <!-- 导航栏主体 -->
-    <cover-view class="navbar" :style="{height: navbarHeight + 'PX',backgroundColor: backgroundColor}">
+    <cover-view class="navbar" :style="{height: navbarHeight + 'PX',backgroundColor: background}">
 
       <!-- 状态栏 -->
       <cover-view class="status-bar" :style="{height: statusBarHeight + 'PX'}"></cover-view>
@@ -68,7 +68,7 @@
         default: 'black',
       },
       // 导航栏背景色
-      backgroundColor: {
+      background: {
         default: '#ffffff',
       },
       //标题文字
@@ -77,16 +77,16 @@
         default: '',
       },
       // 标题颜色
-      titleColor: {
+      color: {
         default: '#000000',
       },
       // 是否显示后退按钮
-      backVisible: {
+      back: {
         required: false,
         default: null,
       },
       // 是否显示home按钮
-      homeVisible: {
+      home: {
         required: false,
         default: null,
       },
@@ -97,6 +97,8 @@
         titleBarHeight: '', // 标题栏高度
         navbarHeight: '', // 导航栏总高度
         actionBtnCount: 2,
+        backVisible: this.back,
+        homeVisible: this.home,
         isIOS: false,
       }
     },
@@ -116,8 +118,17 @@
       },
     },
     beforeMount () {
-
-      console.log('beforeMount', this.backVisible, this.homeVisible)
+    
+      console.log('navbar component mounted');
+      
+      console.log(this, this.backVisible, this.homeVisible);
+      console.log(this._data.backVisible);
+      setTimeout(() => {
+        console.log(this._data.backVisible);
+      }) 
+      
+      
+      // console.log('beforeMount', this, this.$data, this.backVisible, this.homeVisible)
 
       if (this.backVisible === null) {
 
@@ -151,9 +162,9 @@
       }
     },
 
-    mounted () {
-      console.log('mounted', this.backVisible, this.homeVisible)
-    },
+    // mounted () {
+    //   console.log('mounted', this.backVisible, this.homeVisible)
+    // },
   }
 </script>
 

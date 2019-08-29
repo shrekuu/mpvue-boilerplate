@@ -1,9 +1,8 @@
 <template>
   <div class="page">
     <navbar title="文章列表"
-            title-color="yellow"
-            background-color="#009a61"
-    ></navbar>
+            color="yellow"
+            background="#009a61"></navbar>
     <div class="posts">
       <div class="post" v-for="post in posts" :key="post.id">
         <a class="title text-ellipsis" hover-class="none" :href="'/pages/posts/post?id=' + post.id">{{ post.title }}</a>
