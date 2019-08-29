@@ -6,17 +6,23 @@ var vueLoaderConfig = require('./vue-loader.conf')
 var MpvuePlugin = require('webpack-mpvue-asset-plugin')
 var CopyWebpackPlugin = require('copy-webpack-plugin')
 const MpvueEntry = require('mpvue-entry')
-const cosBaseUrl = require('../wecos.config').baseUrl
+
+let wecosConfig
+let cosBaseUrl
+try {
+  wecosConfig = require('../wecos.config')
+  cosBaseUrl = wecosConfig.baseUrl
+} catch (ex) {
+  console.log('没有找到 wecos 配置, 增加 wecos.config.json 以便使用腾讯对象存储放置图片')
+}
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
 // 生成一个随机字符串
-function generateRandomStr () {
-  var result = ''
-  while (!result) result = Math.random().toString(36).substr(2, 10)
-  return result
+function generateHashStr () {
+  + new Date()
 }
 
 const entry = MpvueEntry.getEntry({ config: resolve('src/entry.js') })
@@ -86,12 +92,12 @@ let baseWebpackConfig = {
 
             // 本地图片, 图片放在了 src/static 目录
             if (/^\/static\/images\/.*\.(png|jpg|jpeg|svg|gif)$/.test(match)) {
-              return match + '#' + generateRandomStr()
+              return match + '#' + generateHashStr()
             }
 
             // cos 图片
-            if (/^\/cos\/static\/images\/.*\.(png|jpg|jpeg|svg|gif)$/.test(match)) {
-              return cosBaseUrl + match.substr(4) + '#' + generateRandomStr()
+            if (cosBaseUrl && /^\/cos\/static\/images\/.*\.(png|jpg|jpeg|svg|gif)$/.test(match)) {
+              return cosBaseUrl + match.substr(4) + '#' + generateHashStr()
             }
 
             return match
@@ -110,12 +116,12 @@ let baseWebpackConfig = {
             
             // 本地图片, 图片放在了 src/static 目录
             if (/^\/static\/images\/.*\.(png|jpg|jpeg|svg|gif)$/.test(match)) {
-              return match + '#' + generateRandomStr()
+              return match + '#' + generateHashStr()
             }
 
             // cos 图片
-            if (/^\/cos\/static\/images\/.*\.(png|jpg|jpeg|svg|gif)$/.test(match)) {
-              return cosBaseUrl + match.substr(4) + '#' + generateRandomStr()
+            if (cosBaseUrl && /^\/cos\/static\/images\/.*\.(png|jpg|jpeg|svg|gif)$/.test(match)) {
+              return cosBaseUrl + match.substr(4) + '#' + generateHashStr()
             }
 
             return match
