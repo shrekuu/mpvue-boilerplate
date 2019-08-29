@@ -22,7 +22,7 @@ function resolve (dir) {
 
 // 生成一个随机字符串
 function generateHashStr () {
-  + new Date()
+  return + new Date()
 }
 
 const entry = MpvueEntry.getEntry({ config: resolve('src/entry.js') })
