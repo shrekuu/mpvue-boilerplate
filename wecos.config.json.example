@@ -5,7 +5,7 @@
   "uploadFileSuffix": [".jpg", ".png", ".gif", ".woff", ".svg"],
   "cos": {
     "secret_id": "^_^ 填写 secret id",
-        "secret_key": "^_^ 填写 secret key",
+    "secret_key": "^_^ 填写 secret key",
     "bucket": "mina-1252139118",
     "region": "ap-chengdu",
     "folder": "mpvue-boilerplate/static"

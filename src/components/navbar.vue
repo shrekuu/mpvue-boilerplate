@@ -289,7 +289,7 @@
           border-color: rgba(0, 0, 0, .05);
           background: rgba(0, 0, 0, .15);
           .divider {
-            background-color: rgba(255, 255, 255, .2);
+            background-color: rgba(255, 255, 255, .15);
           }
         }
         .title {

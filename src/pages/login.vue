@@ -5,18 +5,16 @@
 </template>
 
 <script>
-  export default {
-    mpType: 'page',
+export default {
+  mpType: 'page',
 
-    config: {
-      navigationBarTitleText: '登录',
-    },
-
-  }
+  config: {
+    navigationBarTitleText: '登录',
+  },
+}
 </script>
 
 <style lang="scss">
-  .page {
-
-  }
+.page {
+}
 </style>

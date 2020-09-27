@@ -10,8 +10,7 @@
       <div class="meta">
         <div class="author">
           <img class="avatar" :src="post.author.avatar">
-          <div class="name text-ellipsis">{{ post.author.name }} text overflow text overflow text overflow text overflow
-            text overflow text overflow text overflow
+          <div class="name text-ellipsis">{{ post.author.name }}
           </div>
         </div>
         <div class="published-at">{{ post.published_at_humanized }}</div>
