@@ -1,4 +1,6 @@
-# Mpvue Boilerplate
+**同学同学, 停停停, 不推荐使用 Mpvue, 推荐转向 Taro, 具体参考 [这里](https://www.zhihu.com/question/58441061/answer/1482661683)**
+
+# Mpvue Boilerplate(Deprecated)
 
 > A Mpvue 样板工程, 由 mpvue/mpvue-quickstart 创建
 
